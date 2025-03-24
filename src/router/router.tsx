@@ -2,15 +2,22 @@ import { FC } from "react";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { LogInPage } from "../pages/LogIn";
 import { AuthProvider } from "../context/auth/AuthProvider";
+import { AuthenticatedRoute } from "./AuthenticatedRoute";
+import { UnauthenticatedRoute } from "./UnauthenticatedRoute";
 
 export const Router: FC = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route index element={<LogInPage />} />
-          <Route path="profiles">
-            <Route index element={<div>Profiles</div>} />
+          <Route element={<UnauthenticatedRoute />}>
+            <Route index element={<LogInPage />} />
+          </Route>
+
+          <Route element={<AuthenticatedRoute />}>
+            <Route path="profiles">
+              <Route index element={<div>Profiles</div>} />
+            </Route>
           </Route>
         </Routes>
       </AuthProvider>
