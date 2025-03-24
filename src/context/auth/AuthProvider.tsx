@@ -2,7 +2,8 @@ import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import {
   clearLoginData,
   generatePkceChallenge,
-  getCredentials,
+  getCredentialsFromCode,
+  getStoredCrendentials,
 } from "../../services/auth";
 import { AuthContext, AuthStatus } from "./AuthContext";
 import { useNavigate, useSearchParams } from "react-router";
@@ -27,7 +28,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     if (authStatus == "loading") {
       if (code && state) {
-        getCredentials(code)
+        getCredentialsFromCode(code)
           .then((accessToken) => {
             setAuthStatus("authenticated");
             setAccessToken(accessToken);
@@ -39,17 +40,29 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
             setLoginError(error.message);
           });
       } else {
-        // TODO check stored tokens
-        setAuthStatus("unauthenticated");
+        getStoredCrendentials()
+          .then((accessToken) => {
+            if (accessToken) {
+              setAuthStatus("authenticated");
+              setAccessToken(accessToken);
+            } else {
+              clearLoginData();
+              setAuthStatus("unauthenticated");
+            }
+          })
+          .catch(() => {
+            setAuthStatus("unauthenticated");
+          });
       }
     }
   }, [code, state, authStatus]);
 
   const redirectToLogin = useCallback(async () => {
+    clearLoginData();
     const codeChallenge = await generatePkceChallenge();
     const oktaLoginUrl = `${
       import.meta.env.VITE_OKTA_DOMAIN
-    }/oauth2/v1/authorize?response_type=code&client_id=${
+    }/oauth2/default/v1/authorize?response_type=code&client_id=${
       import.meta.env.VITE_OKTA_CLIENT_ID
     }&state=vitecourse&scope=openid&redirect_uri=${encodeURI(
       import.meta.env.VITE_OKTA_LOGIN_REDIRECT

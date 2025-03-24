@@ -32,7 +32,7 @@ export const generatePkceChallenge = async () => {
  * @param code Code received from Okta SSO login screen as a query parameter
  * @returns Access token
  */
-export const getCredentials = async (code: string): Promise<string> => {
+export const getCredentialsFromCode = async (code: string): Promise<string> => {
   const codeVerifier = getPkceVerifier();
   const response = await axios({
     method: "POST",
@@ -44,13 +44,14 @@ export const getCredentials = async (code: string): Promise<string> => {
       client_id: import.meta.env.VITE_OKTA_CLIENT_ID,
       redirect_uri: import.meta.env.VITE_OKTA_LOGIN_REDIRECT,
     }),
-    url: `${import.meta.env.VITE_OKTA_DOMAIN}/oauth2/v1/token`,
+    url: `${import.meta.env.VITE_OKTA_DOMAIN}/oauth2/default/v1/token`,
   });
   const {
     data: { access_token: accessToken, id_token: idToken },
   } = response;
   localStorage.setItem(AT_KEY, accessToken);
   localStorage.setItem(ID_TOKEN_KEY, idToken);
+  localStorage.removeItem(CODE_VERIFIER_KEY);
   return accessToken;
 };
 
@@ -60,4 +61,36 @@ export const getCredentials = async (code: string): Promise<string> => {
  */
 export const getPkceVerifier = () => {
   return localStorage.getItem(CODE_VERIFIER_KEY);
+};
+
+/**
+ * Retrieves the stored access token from local storage
+ */
+export const getStoredCrendentials = async (): Promise<string | null> => {
+  const accessToken = localStorage.getItem(AT_KEY);
+  if (!accessToken) {
+    return null;
+  }
+  const data = {
+    token_type_hint: "access_token",
+    token: accessToken,
+    client_id: import.meta.env.VITE_OKTA_CLIENT_ID,
+  };
+  const url = `${
+    import.meta.env.VITE_OKTA_DOMAIN
+  }/oauth2/default/v1/introspect`;
+  try {
+    const response = await axios({
+      method: "POST",
+      headers: { "content-type": "application/x-www-form-urlencoded" },
+      data: new URLSearchParams(data).toString(),
+      url,
+    });
+    if (!response?.data?.active) {
+      return null;
+    }
+  } catch (error) {
+    return null;
+  }
+  return accessToken;
 };
