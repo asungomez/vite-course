@@ -4,6 +4,7 @@ import { AuthContext, AuthStatus } from "./AuthContext";
 import { Spinner } from "../../atoms/Spinner/Spinner";
 import { MessagePage } from "../../features/MessagePage/MessagePage";
 import { User } from "../../models/user";
+import { useNavigate } from "react-router";
 
 type AuthProviderProps = {
   children: ReactNode;
@@ -12,6 +13,7 @@ type AuthProviderProps = {
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [authStatus, setAuthStatus] = useState<AuthStatus>("loading");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (authStatus == "loading") {
@@ -19,6 +21,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         .then((user) => {
           setUser(user);
           setAuthStatus("authenticated");
+          navigate("/profiles");
         })
         .catch((error) => {
           console.error(error);

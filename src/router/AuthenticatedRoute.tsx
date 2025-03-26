@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { useAuth } from "../context/auth/AuthContext";
 import { Outlet, useNavigate } from "react-router";
 
@@ -9,8 +9,14 @@ import { Outlet, useNavigate } from "react-router";
 export const AuthenticatedRoute: FC = () => {
   const { status } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (status !== "authenticated") {
+      navigate("/");
+    }
+  }, []);
+
   if (status !== "authenticated") {
-    navigate("/");
     return null;
   }
   return <Outlet />;
