@@ -4,6 +4,7 @@ import { LogInPage } from "../pages/LogIn";
 import { AuthProvider } from "../context/auth/AuthProvider";
 import { AuthenticatedRoute } from "./AuthenticatedRoute";
 import { UnauthenticatedRoute } from "./UnauthenticatedRoute";
+import { ErrorPage } from "../pages/Error";
 
 export const Router: FC = () => {
   return (
@@ -13,6 +14,7 @@ export const Router: FC = () => {
           <Route element={<UnauthenticatedRoute />}>
             <Route index element={<LogInPage />} />
           </Route>
+          <Route path="error" element={<ErrorPage />} />
 
           <Route element={<AuthenticatedRoute />}>
             <Route path="profiles">

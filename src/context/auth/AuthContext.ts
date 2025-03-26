@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import { User } from "../../models/user";
 
 export type AuthStatus =
   | "authenticated" // The authentication process has completed successfully and the authenticated user is available.
@@ -7,13 +8,13 @@ export type AuthStatus =
 
 type AuthContextType = {
   redirectToLogin: () => Promise<void>;
-  accessToken: string | null;
+  user: User | null;
   status: AuthStatus;
 };
 
 export const AuthContext = createContext<AuthContextType>({
   redirectToLogin: async () => {},
-  accessToken: null,
+  user: null,
   status: "loading",
 });
 
