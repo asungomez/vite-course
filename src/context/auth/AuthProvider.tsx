@@ -33,9 +33,9 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const redirectToLogin = useCallback(async () => {
     const oktaLoginUrl = `${
       import.meta.env.VITE_OKTA_DOMAIN
-    }/oauth2/default/v1/authorize?response_type=code&client_id=${
+    }/authorize?response_type=code&client_id=${
       import.meta.env.VITE_OKTA_CLIENT_ID
-    }&state=vitecourse&scope=openid&redirect_uri=${encodeURI(
+    }&state=vitecourse&scope=openid%20email&redirect_uri=${encodeURI(
       import.meta.env.VITE_OKTA_LOGIN_REDIRECT
     )}`;
     window.location.href = oktaLoginUrl;
