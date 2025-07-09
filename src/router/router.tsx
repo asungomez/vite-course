@@ -17,8 +17,8 @@ export const Router: FC = () => {
           <Route path="error" element={<ErrorPage />} />
 
           <Route element={<AuthenticatedRoute />}>
-            <Route path="profiles">
-              <Route index element={<div>Profiles</div>} />
+            <Route path="my-listings">
+              <Route index element={<div>My Listings</div>} />
             </Route>
           </Route>
         </Routes>
