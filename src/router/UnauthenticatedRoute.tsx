@@ -13,7 +13,7 @@ export const UnauthenticatedRoute: FC = () => {
 
   useEffect(() => {
     if (status !== "unauthenticated") {
-      navigate("/profiles");
+      navigate("/my-listings");
     }
   }, []);
 

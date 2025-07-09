@@ -21,7 +21,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         .then((user) => {
           setUser(user);
           setAuthStatus("authenticated");
-          navigate("/profiles");
+          navigate("/my-listings");
         })
         .catch((error) => {
           console.error(error);
@@ -35,7 +35,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       import.meta.env.VITE_OKTA_DOMAIN
     }/authorize?response_type=code&client_id=${
       import.meta.env.VITE_OKTA_CLIENT_ID
-    }&state=vitecourse&scope=openid%20email&redirect_uri=${encodeURI(
+    }&state=vitecourse&scope=openid%20email%20offline_access&redirect_uri=${encodeURI(
       import.meta.env.VITE_OKTA_LOGIN_REDIRECT
     )}`;
     window.location.href = oktaLoginUrl;
